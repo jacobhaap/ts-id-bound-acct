@@ -1,8 +1,8 @@
 {
-  "name": "identity-bound-accounts",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "js-iba",
+  "version": "0.1.0",
+  "description": "A JavaScript library for the creation of Identity Bound Accounts",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +10,16 @@
     "type": "git",
     "url": "git+ssh://git@gitlab.com/jacobhaap/identity-bound-accounts.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Jacob Haap",
+  "license": "MIT",
   "bugs": {
     "url": "https://gitlab.com/jacobhaap/identity-bound-accounts/issues"
   },
-  "homepage": "https://gitlab.com/jacobhaap/identity-bound-accounts#readme"
+  "homepage": "https://gitlab.com/jacobhaap/identity-bound-accounts#readme",
+  "dependencies": {
+    "@scure/bip39": "^1.3.0",
+    "js-sha512": "^0.9.0",
+    "keccak": "^3.0.4",
+    "seedrandom": "^3.0.5"
+  }
 }

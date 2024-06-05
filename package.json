@@ -1,0 +1,19 @@
+{
+  "name": "identity-bound-accounts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/jacobhaap/identity-bound-accounts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/jacobhaap/identity-bound-accounts/issues"
+  },
+  "homepage": "https://gitlab.com/jacobhaap/identity-bound-accounts#readme"
+}

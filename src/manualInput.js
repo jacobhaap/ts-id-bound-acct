@@ -6,6 +6,13 @@ const validateManualInput = (inputs) => {
     const numericRegex = /^\d+$/;
     const alphanumericRegex = /^[A-Za-z0-9]+$/;
 
+    const fieldsOrder = [
+        'DOB', 'DOE', 'DOI', 'pin', 'nationality', 'sex', 'birthplace', 
+        'origin', 'authority', 'eyeColor', 'hairColor', 'name', 'surname', 
+        'motherName', 'motherSurname', 'fatherName', 'fatherSurname', 
+        'height', 'weight', 'docNum', 'address', 'misc1', 'misc2', 'misc3'
+    ];
+
     // DDMMYYYY validation method.
     const validateDate = (date, fieldName) => {
         if (date && !dateRegex.test(date)) {
@@ -83,7 +90,15 @@ const validateManualInput = (inputs) => {
         throw new Error(errors.join('; '));
     }
 
-    return inputs;
+    // Create a new object with properties in the desired order
+    const orderedInputs = {};
+    fieldsOrder.forEach(field => {
+        if (inputs[field] !== undefined) {
+            orderedInputs[field] = inputs[field];
+        }
+    });
+
+    return orderedInputs;
 };
 
 module.exports = validateManualInput;

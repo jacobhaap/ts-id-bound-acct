@@ -77,6 +77,45 @@ It is also possible to generate multiple seed phrases from different sets of inp
         }
     });
 
+
+### Command-Line Interface
+Included in this library is the `js-iba` command for the creation of Identity Bound Accounts via the Manual Input method using [Commander](https://www.npmjs.com/package/commander), executable via the command as defined in `package.json`, or by executing the `src/cli.js` module. This supports the creation of seed phrases via a an interactive guided process using [Readline](https://nodejs.org/api/readline.html), or using flags to directly specify options for input data.
+
+    Usage: js-iba [options]
+    
+    Generate an Identity Bound Account. Use flags to specify options directly or run without flags to start an interactive guided process.
+    
+    Options:
+      --DOB <DOB>                      Date of Birth (DDMMYYYY)
+      --DOE <DOE>                      Date of Expiry (DDMMYYYY)
+      --DOI <DOI>                      Date of Issue (DDMMYYYY)
+      --pin <pin>                      PIN (4-12 digits)
+      --nationality <nationality>      Nationality
+      --sex <sex>                      Sex
+      --birthplace <birthplace>        Birthplace
+      --origin <origin>                Origin
+      --authority <authority>          Authority
+      --eyeColor <eyeColor>            Eye Color
+      --hairColor <hairColor>          Hair Color
+      --name <name>                    Name
+      --surname <surname>              Surname
+      --motherName <motherName>        Mother's Name
+      --motherSurname <motherSurname>  Mother's Surname
+      --fatherName <fatherName>        Father's Name
+      --fatherSurname <fatherSurname>  Father's Surname
+      --height <height>                Height
+      --weight <weight>                Weight
+      --docNum <docNum>                Document Number
+      --address <address>              Address
+      --misc1 <misc1>                  Miscellaneous Field 1
+      --misc2 <misc2>                  Miscellaneous Field 2
+      --misc3 <misc3>                  Miscellaneous Field 3
+      --chain <chain>                  Blockchain (ETH, BTC, SOL) (default: "ETH")
+      --seedLength <seedLength>        Seed Phrase Length (12, 18, 24) (default: "12")
+      --returnEntropySeed              Return the entropy seed in the output (default: false)
+      --returnBits                     Return the bits in the output (default: false)
+      -h, --help                       display help for command
+
 ## Overview
 Identity Bound Accounts are designed to work where any identity document (Passport, National ID Card, Residence Permit, Driver's License, Birth Certificate) can be paired with a pin code (any length between 4 and 12 digits) to securely generate a seed phrase, where the same identity document + pin pairing will always result in the same seed phrase. The goal is providing a method to abstract seed phrase storage & protection to improve user friendliness, especially around non-web3 natives and onboarding new users, while keeping accounts non-custodial. The average person already knows how to keep track of/safely store their vital identity documents and memorize pin codes (e.g.. bankcard pins), so by relying upon already known skills/behavior to secure accounts rather than trying to introduce new methods/require new practices be learned (e.g.. the requirement to safely & securely remember or store a 12-24 word seed phrase), creating and securing accounts becomes a simplified and more user-friendly process.
 

@@ -1,6 +1,6 @@
 {
   "name": "js-iba",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A JavaScript library for the creation of Identity Bound Accounts",
   "main": "src/index.js",
   "scripts": {
@@ -20,10 +20,8 @@
   },
   "homepage": "https://gitlab.com/jacobhaap/identity-bound-accounts#readme",
   "dependencies": {
-    "@scure/bip39": "^1.3.0",
     "commander": "^12.1.0",
-    "js-sha512": "^0.9.0",
-    "keccak": "^3.0.4",
+    "seeded-mnemonic": "^0.1.0",
     "seedrandom": "^3.0.5"
   }
 }

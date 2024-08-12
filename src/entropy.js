@@ -1,11 +1,9 @@
-const keccak = require('keccak');
 const crypto = require('crypto');
-const sha512 = require('js-sha512');
 const seedrandom = require('seedrandom');
 const validateManualInput = require('./manualInput');
 const validateMRZInput = require('./mrzInput');
 
-function generateEntropy(inputs, chain) {
+function generateEntropy(inputs) {
     let validatedInputs;
 
     // Check the type of input and validate accordingly
@@ -58,29 +56,7 @@ function generateEntropy(inputs, chain) {
     // Join the shuffled array back into a string and append the checksum
     entropySeed = entropyArray.join('') + checksum;
 
-    // Hash the final entropy seed based on the chain type
-    let hash;
-    if (chain === 'ETH') {
-        hash = keccak('keccak256').update(entropySeed).digest('hex');
-    } else if (chain === 'BTC') {
-        hash = crypto.createHash('sha256').update(entropySeed).digest('hex');
-    } else if (chain === 'SOL') {
-        hash = sha512.create().update(entropySeed).hex();
-    } else {
-        throw new Error('Invalid chain, available options: ETH, BTC, SOL');
-    }
-
-    // Convert the hash to bits
-    const bits = hexToBinary(hash);
-
-    return { preEntropySeed, entropySeed, bits };
-}
-
-function hexToBinary(hex) {
-    return hex.split('').map(hexChar => {
-        const binary = parseInt(hexChar, 16).toString(2);
-        return binary.padStart(4, '0');
-    }).join('');
+    return { entropySeed };
 }
 
 module.exports = generateEntropy;

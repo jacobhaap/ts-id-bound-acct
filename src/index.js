@@ -1,45 +1,67 @@
-const generateEntropy = require('./entropy');
-const { seededMnemonic } = require('seeded-mnemonic');
+const { validateInput, constructEntropySeed } = require('./entropySeed');
+const { constructEntropy, generateMnemonic } = require('./mnemonic');
 
-function generateIdentityBoundAccount(inputData, seedLength, chain, options = {}) {
-    const { returnEntropySeed = false, returnBits = false } = options;
-    try {
-        const result = generateEntropy(inputData);
+function idBoundAcct() {
+    throw new Error(`Function 'idBoundAcct' requires a method.`);
+};
 
-        let mnemonicResult;
-        switch (seedLength) {
-            case 12:
-            case 18:
-            case 24:
-                mnemonicResult = seededMnemonic.string(
-                    result.entropySeed,
-                    seedLength,
-                    chain,
-                    returnBits ? { returnBits: true } : {}
-                );
-                break;
-            default:
-                throw new Error('Invalid seed length. Must be 12, 18, or 24.');
+idBoundAcct = {
+    create: function(input, phraseLength, chain) {
+        if (!input) {
+            throw new Error(`Parameter 'input' is required.`);
+        } if (!phraseLength) {
+            throw new Error(`Parameter 'phraseLength' is required.`);
+        } if (!chain) {
+            throw new Error(`Parameter 'chain' is required.`);
         }
 
-        // Ensure seedPhrase is always included in the response
-        const response = {
-            seedPhrase: mnemonicResult.seedPhrase,
-        };
-
-        if (returnEntropySeed) {
-            response.entropySeed = result.entropySeed;
+        const validatedInput = validateInput(input);
+        const entropySeed = constructEntropySeed(validatedInput.pin, validatedInput.input);
+        const entropy = constructEntropy(entropySeed, chain);
+        const mnemonic = generateMnemonic(entropy, phraseLength);
+        return mnemonic;
+    },
+    validate: function(input) {
+        if (!input) {
+            throw new Error(`Parameter 'input' is required.`);
         }
 
-        if (returnBits) {
-            response.bits = mnemonicResult.bits;
+        const result = validateInput(input);
+        if (result) {
+            return true;
+        } if (!result) {
+            return false;
+        }
+    },
+    entropySeed: function(input) {
+        if (!input) {
+            throw new Error(`Parameter 'input' is required.`);
         }
 
-        return response;
+        const validatedInput = validateInput(input);
+        const entropySeed = constructEntropySeed(validatedInput.pin, validatedInput.input);
+        return entropySeed;
+    },
+    entropy: function(entropySeed, chain) {
+        if (!entropySeed) {
+            throw new Error(`Parameter 'entropySeed' is required.`)
+        } if (!chain) {
+            throw new Error(`Parameter 'chain' is required.`);
+        }
 
-    } catch (error) {
-        throw error;
+        const entropy = constructEntropy(entropySeed, chain);
+        return entropy;
+    },
+    mnemonic: function(entropy, phraseLength) {
+        if (!entropy) {
+            throw new Error(`Parameter 'entropy' is required.`);
+        } if (!phraseLength) {
+            throw new Error(`Parameter 'phraseLength' is required.`);
+        }
+
+        const mnemonic = generateMnemonic(entropy, phraseLength);
+        return mnemonic;
     }
 }
 
-module.exports = { generateIdentityBoundAccount };
+module.exports = idBoundAcct;

@@ -1,148 +1,113 @@
 # Identity Bound Accounts
-Identity Bound Accounts are a method of web3 wallet seed phrase/mnemonic phrase generation, with seeded-random number generation (RNG) based on information extracted from identity documents, rather than traditional RNG methods standardly used. This library, `js-iba`, is a JavaScript implementation of Identity Bound Accounts, currently supporting seed phrase generation for Ethereum, Bitcoin, and Solana wallets, at lengths of 12, 18, and 24 words.
+![NPM Version](https://img.shields.io/npm/v/js-iba) ![NPM License](https://img.shields.io/npm/l/js-iba) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/js-iba)
 
-## Usage
-The library can be installed with the following command:
+> Deterministic Mnemonic Phrases from Identity Documents.
 
-    npm install js-iba
+This library supports a JavaScript implementation of **Identity Bound Accounts**, a deterministic method to derive cryptocurrency wallet mnemonic phrases based on identity documents. To get started, install the library:
+```bash
+npm install js-iba
+```
+This library provides an `idBoundAcct` function for the generation of Identity Bound Accounts. This supports the generation of mnemonic phrases for **Ethereum**, **Bitcoin**, and **Solana**, at phrase lengths of 12, 18, and 24 words. To create an Identity Bound Account, the `.create` method of is used.
+```js
+idBoundAcct.create(input, phraseLength, chain);
+```
+The `input` parameter expects information extracted from an identity document, provided via the Manual Input or Machine-Readable Zone (MRZ) input methods. The `phraseLength` parameter expects a number corresponding to the desired length of the mnemonic phrase (12, 18, or 24). The `chain` parameter corresponds to the type of account desired, `'ETH'` for Ethereum, `'BTC'` for Bitcoin, and `'SOL'` for Solana.
 
-Then the library must be required using:
+# Example Use
+In addition to the `.create` method, `idBoundAcct` contains four other methods: `.validate`, `.entropySeed`, `.entropy`, and `.mnemonic`. These are used to validate input from identity documents, construct an entropy seed, obtain seeded entropy, and generate a mnemonic phrase respectively.
 
-    const { generateIdentityBoundAccount } =  require('js-iba');
+## Creating an Identity Bound Account
+An Identity Bound Account is created using the `.create` method. In this first example, a 12-word mnemonic phrase for an Ethereum account is created from an identity document via the Manual Input method.
+```js
+const idBoundAcct =  require('js-iba');
 
-The `generateIdentityBoundAccount` function requires that `inputData`, a `seedLength`, and `chain` be provided. A `returnEntropySeed` option exists to return the `entropySeed`, the string used in seeding entropy, and a `returnBits` option exists to return the `bits` obtained from the seeded entropy.
+const input = {
+    docNum: 'L01X00T47',
+    surname: 'MUSTERMANN',
+    name: 'ERIKA',
+    DOB: '12081983',
+    nationality: 'DEUTSCH',
+    birthplace: 'BERLIN',
+    eyeColor: 'GREEN',
+    height: '160',
+    address: 'HEIDESTRASSE17',
+    pin: '123456'
+}
 
-    generateIdentityBoundAccount(inputData, 12, 'ETH', { returnEntropySeed: true, returnBits: true });
+const mnemonic = idBoundAcct.create(input, 12, 'ETH');
+console.log(mnemonic);
 
-### Example Usage
-A complete JavaScript module using the `js-iba` library to generate a 12-word Ethereum seed phrase would resemble the following example:
+// Sample Output:
+// minute sing aisle comic grass valid ivory despair olympic trade buddy work
 
-    const { generateIdentityBoundAccount } =  require('js-iba');
-    
-    const inputData = {
-        docNum: 'L01X00T47',
-        surname: 'MUSTERMANN',
-        name: 'ERIKA',
-        DOB: '12081983',
-        nationality: 'DEUTSCH',
-        birthplace: 'BERLIN',
-        eyeColor: 'GREEN',
-        height: '160',
-        address: 'HEIDESTRASSE17',
-        pin: '123456'
-    }
-        
-    const result = generateIdentityBoundAccount(inputData, 12, 'ETH');
-        console.log(`Seed Phrase:`, result.seedPhrase);
+```
 
-It is also possible to generate multiple seed phrases from different sets of input data at the same time, as long as they are all for the same number of words and the same chain (e.g.. generate a set of 12-word Ethereum Wallets):
+In this second example, a 24-word mnemonic phrase for a Solana account is created from an identity document via the Machine-Readable Zone input construction method.
+```js
+const idBoundAcct =  require('js-iba');
 
-    const { generateIdentityBoundAccount } =  require('js-iba');
-    
-    const inputData = [
-        {
-            docNum: 'L01X00T47',
-            surname: 'MUSTERMANN',
-            name: 'ERIKA',
-            DOB: '12081983',
-            nationality: 'DEUTSCH',
-            birthplace: 'BERLIN',
-            eyeColor: 'GREEN',
-            height: '160',
-            address: 'HEIDESTRASSE17',
-            pin: '123456'
-        },
-        {
-            firstRow: 'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<<<<<<<<<',
-            secondRow: 'C01X00T478D<<6408125F2702283<<<<<<<<<<<<<<<4',
-            pin: '123456'
-        },
-        {
-            firstRow: 'IDD<<T220001293<<<<<<<<<<<<<<<',
-            secondRow: '6408125<2010315D<<<<<<<<<<<<<4',
-            thirdRow: 'MUSTERMANN<<ERIKA<<<<<<<<<<<<<',
-            pin: '123456'
-        }
-    ];
-    
-    inputData.forEach((inputData, index) => {
-        try {
-            const result = generateIdentityBoundAccount(inputData, 12, 'ETH', { returnEntropySeed: true, returnBits: true });
-            console.log(`${index + 1} - Seed Phrase:`, result.seedPhrase);
-            console.log(`${index + 1} - Entropy Seed:`, result.entropySeed);
-            console.log(`${index + 1} - Bits:`, result.bits);
-        } catch (error) {
-            console.log(`${index + 1} - Error:`, error.message);
-        }
-    });
+const input = {
+    firstRow: 'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<<<<<<<<<',
+    secondRow: 'C01X00T478D<<6408125F2702283<<<<<<<<<<<<<<<4',
+    pin: '123456'
+}
+
+const mnemonic = idBoundAcct.create(input, 24, 'SOL');
+console.log(mnemonic);
+
+// Sample Output:
+// black artist cause sail captain identify hair fancy involve equip witness fancy miss arctic script coast firm panther whale asset hawk equal safe power
+
+```
+
+## Other Methods
+### Validate
+The `.validate` method is used to validate that input received complies with the requirements of a permitted input constructed method. A single `input` parameter is expected, which should contain input extracted from an identity document. This method returns a true value if validation passes, and a false value if validation fails. When validation fails, a false value does not return if errors are thrown. Errors are likely to be thrown that highlight the exact issue with the received input in these cases.
+```js
+idBoundAcct.validate(input);
+```
+*Sample Output:*
+```
+true
+```
 
 
-### Command-Line Interface
-Included in this library is the `js-iba` command for the creation of Identity Bound Accounts via the Manual Input method using [Commander](https://www.npmjs.com/package/commander), executable via the command as defined in `package.json`, or by executing the `src/cli.js` module. This supports the creation of seed phrases via a an interactive guided process using [Readline](https://nodejs.org/api/readline.html), or using flags to directly specify options for input data.
+### Entropy Seed
+To obtain an entropy seed, the `.entropySeed` method is used. A single `input` parameter is expected, which should contain input extracted from an identity document. An entropy seed is returned in the output, derived from the provided input.
+```js
+idBoundAcct.entropySeed(input);
+```
+*Sample Output:* 
+```
+HXDCT34RRBM1TE931A6USNSD40EE017N1ATK5SU0RNH217E6RESR8TEN1GMAIISE0EELIL082605656
+```
 
-    Usage: js-iba [options]
-    
-    Generate an Identity Bound Account. Use flags to specify options directly or run without flags to start an interactive guided process.
-    
-    Options:
-      --DOB <DOB>                      Date of Birth (DDMMYYYY)
-      --DOE <DOE>                      Date of Expiry (DDMMYYYY)
-      --DOI <DOI>                      Date of Issue (DDMMYYYY)
-      --pin <pin>                      PIN (4-12 digits)
-      --nationality <nationality>      Nationality
-      --sex <sex>                      Sex
-      --birthplace <birthplace>        Birthplace
-      --origin <origin>                Origin
-      --authority <authority>          Authority
-      --eyeColor <eyeColor>            Eye Color
-      --hairColor <hairColor>          Hair Color
-      --name <name>                    Name
-      --surname <surname>              Surname
-      --motherName <motherName>        Mother's Name
-      --motherSurname <motherSurname>  Mother's Surname
-      --fatherName <fatherName>        Father's Name
-      --fatherSurname <fatherSurname>  Father's Surname
-      --height <height>                Height
-      --weight <weight>                Weight
-      --docNum <docNum>                Document Number
-      --address <address>              Address
-      --misc1 <misc1>                  Miscellaneous Field 1
-      --misc2 <misc2>                  Miscellaneous Field 2
-      --misc3 <misc3>                  Miscellaneous Field 3
-      --chain <chain>                  Blockchain (ETH, BTC, SOL) (default: "ETH")
-      --seedLength <seedLength>        Seed Phrase Length (12, 18, 24) (default: "12")
-      --returnEntropySeed              Return the entropy seed in the output (default: false)
-      --returnBits                     Return the bits in the output (default: false)
-      -h, --help                       display help for command
 
-## Overview
-Identity Bound Accounts are designed to work where any identity document (Passport, National ID Card, Residence Permit, Driver's License, Birth Certificate) can be paired with a pin code (any length between 4 and 12 digits) to securely generate a seed phrase, where the same identity document + pin pairing will always result in the same seed phrase. The goal is providing a method to abstract seed phrase storage & protection to improve user friendliness, especially around non-web3 natives and onboarding new users, while keeping accounts non-custodial. The average person already knows how to keep track of/safely store their vital identity documents and memorize pin codes (e.g.. bankcard pins), so by relying upon already known skills/behavior to secure accounts rather than trying to introduce new methods/require new practices be learned (e.g.. the requirement to safely & securely remember or store a 12-24 word seed phrase), creating and securing accounts becomes a simplified and more user-friendly process.
+### Entropy
+The `.entropy` method expects an `entropySeed` parameter, which should should contain an entropy seed, and a `chain` parameter, which should contain either 'ETH', 'BTC', or 'SOL', depending on the type of account desired. The output will contain the hexadecimal digest of the hash of the entropy seed.
+```js
+idBoundAcct.entropy(entropySeed, chain);
+```
+*Sample Output:* 
+```
+8d59281697265fe19db9e09a5cd475fedf9680aa5ea26fef743abb1372b2c44b
+```
 
-### Seeding Entropy
-Let's take the following example as input data obtained from an identity document:
+### Mnemonic
+A mnemonic phrase can be generated using the `.mnemonic` method that expects an `entropy` parameter, which should contain entropy in hexadecimal, and a `phraseLength` parameter, which should be the number 12, 18, or 24 (the number of words in length). The output contains a mnemonic phrase, generated from the provided entropy at the requested length.
+```js
+idBoundAcct.mnemonic(entropy, phraseLength);
+```
+*Sample Output:*
+```
+minute sing aisle comic grass valid ivory despair olympic trade buddy work
+```
 
-    Name: Real
-    Surname: Human
-    Nationality: Earth
-    Date of Birth: 04042004
-    Document Number: A123456
+# Constructing Input
+The basis for constructing input from an identity document is based on either providing a **Manual Input**, or providing lines from a **Machine-Readable Zone (MRZ)**. Both methods require input be paired with a 4 to 12-digit pin code.
 
-Paired with this identity data is the 6-digit pin code `890123`. The first step in seeding entropy is creating a single string containing all this data, the `preEntropySeed`. The order in which the individual pieces of input data (e.g.. name, surname, nationality) are entered in the string is determined by [seeded random number generation](https://www.npmjs.com/package/seedrandom), seeded by the pin, shuffling the pieces of input data based on the Fisher-Yates Shuffle Algorithm. The shuffled data has the pin affixed at the end, and this string becomes the `preEntropySeed`:
-
-    04042004EarthA123456RealHuman890123
-
-For added security, this string undergoes another shuffle. First, a checksum is generated by taking the decimal conversion of the sha256 hash of the `preEntropySeed`, and extracting the first 6 numbers. Those 6 numbers are used to seed the random number generator used in the second shuffle using the same shuffle algorithm, only this time shuffling every character in the string. After the completed shuffle, the checksum is affixed to the end of the string, becoming the `entropySeed`:
-
-    Reha20a2Hm5n9uA64330204a18r0l404tE1847288
-
-### Seed Phrase Generation
-Seed phrase generation is handled by the [seeded-mnemonic](https://www.npmjs.com/package/seeded-mnemonic) library, where the `entropySeed` is passed as a string input to the `seededMnemonic.string()` function. The seed phrase with entropy seeded by the given identity document is returned in `result.seedPhrase` from the `seededMnemonic` function.
-
-## Identity Documents
-This library currently supports two methods of inputting data from identity documents. The first method, Manual Input, is intended for either manually or automatically entering information (via a process like document scanning) that visually appears printed on identity documents. The second method, Machine-Readable Zone Input, is intended for taking lines of data from machine readable zones of identity documents. Both are required to be paired with a 4 to 12-digit numerical pin code.
-
-### Manual Input
-Manual Input supports a variety of different pieces of information that can be included in the `inputData`. None of the information is mandatory, the only requirement is at least one be provided, along with the pin:
+## Manual Input
+When constructing input via Manual Input, individual pieces of information extracted from an identity document are supplied as key-value pairs. Any combination of pairs may be used in this input method, and they may be passed in any order. The minimum requirement is that at least one key-value pair be provided, along with a pin. Possible options:
 
  - `DOB`: Date of Birth (DDMMYYYY)
  - `DOE`: Date of Document Expiration (DDMMYYYY)
@@ -161,46 +126,74 @@ Manual Input supports a variety of different pieces of information that can be i
  - `motherSurname`: Bearer's Mother's Last Name
  - `fatherName`: Bearer's Father's Given Name(s)
  - `fatherSurname`: Bearer's Father's Last Name
- - `height`: Bearer's Height (cm)
- - `weight`: Bearer's Weight (kg)
+ - `height`: Bearer's Height
+ - `weight`: Bearer's Weight
  - `docNum`: Document Number
- - `address`: Address listed on the Document
+ - `address`: Address
  - `misc1`: Miscellaneous 1
  - `misc2`: Miscellaneous 2
  - `misc3`: Miscellaneous 3
 
-Example Input:
+*Sample input constructed from a set of key-value pairs:*
+```js
+const input = {
+    docNum: 'L01X00T47',
+    surname: 'MUSTERMANN',
+    name: 'ERIKA',
+    DOB: '12081983',
+    nationality: 'DEUTSCH',
+    birthplace: 'BERLIN',
+    eyeColor: 'GREEN',
+    height: '160',
+    address: 'HEIDESTRASSE17',
+    pin: '123456'
+}
 
-	{
-        docNum: 'L01X00T47',
-        surname: 'MUSTERMANN',
-        name: 'ERIKA',
-        DOB: '12081983',
-        nationality: 'DEUTSCH',
-        birthplace: 'BERLIN',
-        eyeColor: 'GREEN',
-        height: '160',
-        address: 'HEIDESTRASSE17',
-        pin: '123456'
-	}
+```
 
-### Machine-Readable Zone Input
-Machine-Readable Zone Input supports passing lines of machine-readable data following the **ICAO 9303** Standard for **ISO/IEC 7810** Type 3 and Type 2 documents. Type 3 documents, typically passports, contain 2 lines of data with 44 characters each, while Type 1 documents, typically ID cards, contain 3 lines of data with 30 characters each. Each line of the machine-readable data is passed along with the pin in the `inputData`.
+## Machine-Readable Zone (MRZ)
+When constructing input from a Machine-Readable Zone, lines of MRZ data following the **ICAO 9303** Standard for **ISO/IEC 7810** Type 3 and Type 2 documents may be provided. Type 3 documents, typically passports, contain 2 lines of data with 44 characters each, while Type 1 documents, typically ID cards, contain 3 lines of data with 30 characters each. Each line of MRZ data is provided as a key-value pair. The valid keys are `firstRow`, `secondRow`, and `thirdRow`, which correspond to the row/line numbers of MRZ data from an identity document. All lines from any identity document must be provided, along with a pin.
 
-Example for a Passport:
+*Sample MRZ input from a Passport:*
+```js
+const input = {
+    firstRow: 'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<<<<<<<<<',
+    secondRow: 'C01X00T478D<<6408125F2702283<<<<<<<<<<<<<<<4',
+    pin: '123456'
+}
 
-	{
-        firstRow: 'P<D<<MUSTERMANN<<ERIKA<<<<<<<<<<<<<<<<<<<<<<',
-        secondRow: 'C01X00T478D<<6408125F2702283<<<<<<<<<<<<<<<4',
-        pin: '123456'
-	}
+```
 
-Example for an ID Card:
+*Sample MRZ input from an ID Card:*
+```js
+const input = {
+    firstRow: 'IDD<<T220001293<<<<<<<<<<<<<<<',
+    secondRow: '6408125<2010315D<<<<<<<<<<<<<4',
+    thirdRow: 'MUSTERMANN<<ERIKA<<<<<<<<<<<<<',
+    pin: '123456'
+}
 
-	{
-        firstRow: 'IDD<<T220001293<<<<<<<<<<<<<<<',
-        secondRow: '6408125<2010315D<<<<<<<<<<<<<4',
-        thirdRow: 'MUSTERMANN<<ERIKA<<<<<<<<<<<<<',
-        pin: '123456'
-	}
+```
 
+# Seeding Entropy
+Take the following sample as input extracted from an identity document:
+```
+Name: Real
+Surname: Human
+Nationality: Earth
+Date of Birth: 04042004
+Document Number: A123456
+```
+Paired with this identity data is a 6-digit pin, `890123`. The first step in seeding entropy involves creating a single string, the `preEntropySeed`, which contains all this data. The order of individual pieces of information (e.g., name, surname, nationality) is determined by HMAC-based random number generation. This process uses the pin and a Buffer of the object containing the remaining input key-value pairs to seed the RNG, which then shuffles the input using the **Fisher-Yates Shuffle Algorithm**. The resulting shuffled data forms the string, with the pin appended at the end.
+```
+EarthHumanA12345604042004Real890123
+```
+For added security/increased randomness, this string undergoes a second shuffle. First, a checksum is generated by taking the decimal conversion of the *sha256* hash of the `preEntropySeed`, and extracting the first 6 digits. These digits, along with a Buffer of the pre-entropy seed are then used to seed the random number generator for the second shuffle, using the same algorithm, shuffling every character in the string. When the shuffle is complete, the checksum is affixed to the end of the string, forming the `entropySeed`.
+```
+aR9003a8e42A3t64Hh4u205401m2n1ra0lE314108
+```
+
+# Mnemonic Phrase Generation
+In generating mnemonic phrases, entropy is derived from a hash taken of the `entropySeed`. To avoid collisions between account types, mnemonic generation for Ethereum is based on *keccak256* ([keccak](https://www.npmjs.com/package/keccak)), Bitcoin on *sha256*, and Solana on *sha512*. This hash is then converted to a binary string (bits), and truncated based on the desired length of mnemonic phrase.
+
+To derive the mnemonic phrase, entropy is processed with [@iacobus/bip39](https://www.npmjs.com/package/@iacobus/bip39), using the English wordlist. The resulting mnemonic phrase is then validated, returning the phrase if validation passed, and throwing an error if validation failed.

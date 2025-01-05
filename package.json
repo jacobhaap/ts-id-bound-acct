@@ -1,13 +1,10 @@
 {
   "name": "js-iba",
-  "version": "0.3.0",
-  "description": "A JavaScript library for the creation of Identity Bound Accounts",
+  "version": "0.4.0",
+  "description": "Deterministic Mnemonic Phrases from Identity Documents.",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "bin": {
-    "js-iba": "src/cli.js"
   },
   "repository": {
     "type": "git",
@@ -20,8 +17,7 @@
   },
   "homepage": "https://gitlab.com/jacobhaap/identity-bound-accounts#readme",
   "dependencies": {
-    "commander": "^12.1.0",
-    "seeded-mnemonic": "^0.1.0",
-    "seedrandom": "^3.0.5"
+    "@iacobus/bip39": "^1.2.0",
+    "keccak": "^3.0.4"
   }
 }

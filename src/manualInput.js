@@ -57,7 +57,7 @@ const validateManualInput = (inputs) => {
     
     // Pin validation
     if (inputs.pin && !pinRegex.test(inputs.pin)) {
-        errors.push('pin must be a numerical string between 4 and 12 digits');
+        errors.push(`pin must be a numerical string between 4 and 12 digits`);
     }
 
     // Validation of latin input

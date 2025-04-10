@@ -1,0 +1,31 @@
+{
+  "name": "@jacobhaap/id-bound-acct",
+  "version": "1.0.0",
+  "license": "MIT",
+  "exports": "./src/mod.ts",
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.ns", "deno.window", "esnext"]
+  },
+  "include": [
+    "./src/**/*",
+    "deno.json",
+    "deno.lock",
+    "LICENSE",
+    "README.md"
+  ],
+  "exclude": [
+    "./.github",
+    "./scripts",
+    ".gitlab-ci.yml",
+    ".gitignore"
+  ],
+  "test": {
+    "include": ["./tests/**/*"]
+  },
+  "imports": {
+    "@iacobus/bip39": "npm:@iacobus/bip39@^2.1.0",
+    "@iacobus/hbedf": "npm:@iacobus/hbedf@^1.2.0",
+    "@noble/hashes": "npm:@noble/hashes@^1.7.1"
+  }
+}
